@@ -1,33 +1,48 @@
-j
+import os
+import random
 import json
 import cherrypy
 
 class spot():
 
     def __init__(self, data: dict):
-        self.head, self.blocks, self.food, self.grid = data.values()
+        self.head, self.barriers, self.food, self.table = data.values()
         self.neighbours = []
+        self.grid = None
 
     def __str__(self):
-        return f'{self.head}\n{self.blocks}\n{self.food}\n{self.grid}'
+        return f'{self.head}\n{self.barriers}\n{self.food}\n{self.table}'
 
     def gridValue(self, point: dict) -> int:
-        for block in self.blocks:
-            if block == point:
+        for barrier in self.barriers:
+            if barrier == point:
                 return 0
         else:
             return 1
 
 
     def binaryGrid(self):
-        print([ [self.gridValue({"x": j , "y": i}) for j in range(0, self.grid["width"])] for i in range(self.grid["height"], -1, -1) ])
+        self.grid = [ [self.gridValue({'x': j, 'y': i})  for j in range(0, self.table["width"])] for i in range(self.table["height"] - 1, -1, -1) ]
+        print(self.grid)
 
 
     def updateNeighbour(self):
-        #if self.head["x"] < self.grid["height"] - 1 and 
-        pass
-        
 
+        self.neighbours = []
+
+        if self.head["x"] < self.table["width"] - 1 and self.grid[self.table['height'] - 1 - self.head['y']][self.head['x'] + 1]:
+            self.neighbours.append((self.head["x"] + 1, self.head["y"]))
+
+        if self.head["x"] > 0 and self.grid[self.table['height'] - 1 - self.head['y']][self.head['x'] - 1]: 
+            self.neighbours.append((self.head["x"] - 1, self.head["y"]))
+
+        if self.head["y"] < self.table["height"] - 1 and self.grid[self.table['height'] - 1 - self.head['y'] - 1][self.head['x']]: 
+            self.neighbours.append((self.head["x"], self.head["y"] + 1))
+
+        if self.head["y"] > 0 and self.grid[self.table['height'] - 1 - self.head['y'] + 1][self.head['x']]:
+            self.neighbours.append((self.head["x"], self.head["y"] - 1))
+
+        print(self.neighbours)
 """
 This is a simple Battlesnake server written in Python.
 For instructions see https://github.com/BattlesnakeOfficial/starter-snake-python/README.md
@@ -82,6 +97,7 @@ class Battlesnake(object):
         cur = spot(newData)
         print(cur)
         cur.binaryGrid()
+        cur.updateNeighbour()
 
         return newData
 
