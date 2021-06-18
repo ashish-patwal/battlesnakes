@@ -1,7 +1,9 @@
 import os
 import random
+import math
 import json
 import cherrypy
+from queue import PriorityQueue
 
 class spot():
 
@@ -10,8 +12,10 @@ class spot():
         self.neighbours = []
         self.grid = None
 
-    def __str__(self):
-        return f'{self.head}\n{self.barriers}\n{self.food}\n{self.table}'
+    def absDistance(self, food: dict, neighbour):
+        nx, ny , _ = neighbour
+        fx, fy = food.values()
+        return abs(nx - fx) + abs(ny - fy) 
 
     def gridValue(self, point: dict) -> int:
         for barrier in self.barriers:
@@ -20,29 +24,37 @@ class spot():
         else:
             return 1
 
-
     def binaryGrid(self):
         self.grid = [ [self.gridValue({'x': j, 'y': i})  for j in range(0, self.table["width"])] for i in range(self.table["height"] - 1, -1, -1) ]
-        print(self.grid)
-
 
     def updateNeighbour(self):
 
         self.neighbours = []
 
         if self.head["x"] < self.table["width"] - 1 and self.grid[self.table['height'] - 1 - self.head['y']][self.head['x'] + 1]:
-            self.neighbours.append((self.head["x"] + 1, self.head["y"]))
+            self.neighbours.append((self.head["x"] + 1, self.head["y"], 'right'))
 
         if self.head["x"] > 0 and self.grid[self.table['height'] - 1 - self.head['y']][self.head['x'] - 1]: 
-            self.neighbours.append((self.head["x"] - 1, self.head["y"]))
+            self.neighbours.append((self.head["x"] - 1, self.head["y"], 'left'))
 
         if self.head["y"] < self.table["height"] - 1 and self.grid[self.table['height'] - 1 - self.head['y'] - 1][self.head['x']]: 
-            self.neighbours.append((self.head["x"], self.head["y"] + 1))
+            self.neighbours.append((self.head["x"], self.head["y"] + 1, 'up'))
 
         if self.head["y"] > 0 and self.grid[self.table['height'] - 1 - self.head['y'] + 1][self.head['x']]:
-            self.neighbours.append((self.head["x"], self.head["y"] - 1))
+            self.neighbours.append((self.head["x"], self.head["y"] - 1, 'down'))
 
-        print(self.neighbours)
+    def returnMove(self):
+        
+        open_set = PriorityQueue()
+
+        for food in self.food:
+            for neighbour in self.neighbours:
+                open_set.put((self.absDistance(food,neighbour), neighbour[2]))
+
+        return open_set.get()
+
+
+
 """
 This is a simple Battlesnake server written in Python.
 For instructions see https://github.com/BattlesnakeOfficial/starter-snake-python/README.md
@@ -91,15 +103,15 @@ class Battlesnake(object):
         newData["grid"] = {"height": data["board"]["height"], "width": data["board"]["width"]}
 
         # Choose a random direction to move in
-        possible_moves = ["up", "down", "left", "right"]
-        move = random.choice(possible_moves)
+        #possible_moves = ["up", "down", "left", "right"]
+        #move = random.choice(possible_moves)
 
         cur = spot(newData)
-        print(cur)
         cur.binaryGrid()
         cur.updateNeighbour()
+        _ , move = cur.returnMove()
 
-        return newData
+        return {"move": move}
 
     @cherrypy.expose
     @cherrypy.tools.json_in()
