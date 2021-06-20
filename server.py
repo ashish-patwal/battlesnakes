@@ -43,46 +43,58 @@ class spot():
         if self.head["y"] > 0 and self.grid[self.table['height'] - 1 - self.head['y'] + 1][self.head['x']]:
             self.neighbours.append((self.head["x"], self.head["y"] - 1, 'down'))
 
-    def dfs(self, mat, x, y, r, c):
+    def dfs(self, mat, x, y, r, c, counter):
 
-        if x < 0 or y < 0 or x >= c or y >= r :
-            return False
+        if x < 0 or y < 0 or x >= c or y >= r or not mat[r - 1 - y][x]:
+            return 
 
-        if mat[r - 1 - y][x] ==  0:
-            return True
-        
-        elif mat[r - 1 - y][x] == 1:
-            mat[r - 1 - y][x] = 0
-            return (self.dfs(mat, x + 1, y, r, c) and self.dfs(mat, x, y + 1, r, c) and self.dfs(mat, x - 1, y, r, c) and self.dfs(mat, x, y - 1, r, c))
+        mat[r - 1 - y][x] = 0
+        counter.append(counter.pop() + 1)
+        self.dfs(mat, x + 1, y, r, c, counter)
+        self.dfs(mat, x, y + 1, r, c, counter)
+        self.dfs(mat, x - 1, y, r, c, counter)
+        self.dfs(mat, x, y - 1, r, c, counter)
+
+
 
     def validNeighbours(self):
 
-        mat = [row[:] for row in self.grid ]
-        righty = self.dfs(mat, self.neighbours[1][0], self.neighbours[1][1], self.table["height"], self.table["width"])
+        open_set = []
 
-        mat = [row[:] for row in self.grid ]
-        lefty = self.dfs(mat, self.neighbours[0][0], self.neighbours[0][1], self.table["height"], self.table["width"])
+        for neighbour in self.neighbours:
+            count = [0]
+            mat = [row[:] for row in self.grid ]
+            self.dfs(mat, neighbour[0], neighbour[1], self.table["height"], self.table["width"], count)
+            open_set.append((count[-1], neighbour))
+        
+        open_set.sort()
+        self.neighbours.clear()
+        self.neighbours.append(open_set[-1][1])
 
-        print(self.neighbours)
-            
-        if not lefty and not righty:
-            return
-
-        elif lefty:
-            val = self.neighbours.pop(0)
-
-        elif righty:
-            val = self.neighbours.pop(1)
+        #countR = [0]
+        #mat = [row[:] for row in self.grid ]
+        #self.dfs(mat, self.neighbours[1][0], self.neighbours[1][1], self.table["height"], self.table["width"], countR)
+#
+#        countL = [0]
+#        mat = [row[:] for row in self.grid ]
+#        self.dfs(mat, self.neighbours[0][0], self.neighbours[0][1], self.table["height"], self.table["width"], countL)
+#
+#        print(countL, countR)
+#        print(self.neighbours)
+#
+#        if countL <= countR:
+#            self.neighbours.pop(0)
+#            
+#        elif countL >= countR:
+#            self.neighbours.pop(1)
 
     def returnMove(self):
 
         self.binaryGrid()
         self.updateNeighbours()
+        self.validNeighbours()
         
         open_set = PriorityQueue()
-
-        if len(self.neighbours) == 2:
-            self.validNeighbours()
 
         for food in self.food:
             if self.neighbours:
