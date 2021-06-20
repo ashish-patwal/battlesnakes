@@ -1,4 +1,4 @@
-./bin/
-./lib/
-./lib64/
-./include/
+bin
+lib
+lib64
+include
