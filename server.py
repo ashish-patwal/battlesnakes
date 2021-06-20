@@ -43,16 +43,42 @@ class spot():
         if self.head["y"] > 0 and self.grid[self.table['height'] - 1 - self.head['y'] + 1][self.head['x']]:
             self.neighbours.append((self.head["x"], self.head["y"] - 1, 'down'))
 
+    def dfs(self, mat, x, y, r, c):
+
+        if x < 0 or y < 0 or x >= c or y >= r :
+            return False
+
+        if mat[r - 1 - y][ x ] ==  0:
+            return True
+        
+        mat[r - 1 - y][x] = 0
+
+        return (self.dfs(mat, x+1, y, r, c) and self.dfs(mat, x, y + 1, r, c) and self.dfs(mat, x - 1, y, r, c) and self.dfs(mat, x, y - 1, r, c))
+
+    def validNeighbours(self):
+
+        for neighbour in self.neighbours:
+            mat = [row[:] for row in self.grid ]
+            print(mat)
+            if self.dfs(mat, neighbour[0], neighbour[1], self.table["height"], self.table["width"]):
+                self.neighbours.remove(neighbour)
+
     def returnMove(self):
         
         open_set = PriorityQueue()
 
+        if len(self.neighbours) == 2:
+            self.validNeighbours()
+
         for food in self.food:
-            for neighbour in self.neighbours:
-                open_set.put((self.absDistance(food,neighbour), neighbour[2]))
+            if self.neighbours:
+                for neighbour in self.neighbours:
+                    open_set.put((self.absDistance(food,neighbour), neighbour[2]))
+
+            else:
+                open_set.put((-1, 'down'))
 
         return open_set.get()
-
 
 
 """
@@ -96,8 +122,8 @@ class Battlesnake(object):
         data = cherrypy.request.json
 
         newData = {}
+
         newData["head"] = data["you"]["head"]
-        #newData.update({data["board"]["height"],data["board"]["width"]})
         newData["blocks"] = data["you"]["body"]
         newData["food"] = data["board"]["food"]
         newData["grid"] = {"height": data["board"]["height"], "width": data["board"]["width"]}
