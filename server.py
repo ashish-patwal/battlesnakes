@@ -92,7 +92,9 @@ class spot():
 
         self.binaryGrid()
         self.updateNeighbours()
-        self.validNeighbours()
+
+        if len(self.neighbours) == 2:
+            self.validNeighbours()
         
         open_set = PriorityQueue()
 
