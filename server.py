@@ -27,7 +27,7 @@ class spot():
     def binaryGrid(self):
         self.grid = [ [self.gridValue({'x': j, 'y': i})  for j in range(0, self.table["width"])] for i in range(self.table["height"] - 1, -1, -1) ]
 
-    def updateNeighbour(self):
+    def updateNeighbours(self):
 
         self.neighbours = []
 
@@ -48,22 +48,28 @@ class spot():
         if x < 0 or y < 0 or x >= c or y >= r :
             return False
 
-        if mat[r - 1 - y][ x ] ==  0:
+        if mat[r - 1 - y][x] ==  0:
             return True
         
-        mat[r - 1 - y][x] = 0
-
-        return (self.dfs(mat, x+1, y, r, c) and self.dfs(mat, x, y + 1, r, c) and self.dfs(mat, x - 1, y, r, c) and self.dfs(mat, x, y - 1, r, c))
+        elif mat[r - 1 - y][x] == 1:
+            mat[r - 1 - y][x] = 0
+            return (self.dfs(mat, x + 1, y, r, c) and self.dfs(mat, x, y + 1, r, c) and self.dfs(mat, x - 1, y, r, c) and self.dfs(mat, x, y - 1, r, c))
 
     def validNeighbours(self):
 
+        trap = None
+
         for neighbour in self.neighbours:
             mat = [row[:] for row in self.grid ]
-            print(mat)
             if self.dfs(mat, neighbour[0], neighbour[1], self.table["height"], self.table["width"]):
-                self.neighbours.remove(neighbour)
+                trap = neighbour
+
+        self.neighbours.remove(trap)
 
     def returnMove(self):
+
+        self.binaryGrid()
+        self.updateNeighbours()
         
         open_set = PriorityQueue()
 
@@ -133,8 +139,6 @@ class Battlesnake(object):
         #move = random.choice(possible_moves)
 
         cur = spot(newData)
-        cur.binaryGrid()
-        cur.updateNeighbour()
         _ , move = cur.returnMove()
 
         return {"move": move}
