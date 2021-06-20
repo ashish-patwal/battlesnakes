@@ -58,19 +58,21 @@ class spot():
     def validNeighbours(self):
 
         mat = [row[:] for row in self.grid ]
-        righty = self.dfs(mat, self.neighbours[0][0], self.neighbours[0][1], self.table["height"], self.table["width"])
+        righty = self.dfs(mat, self.neighbours[1][0], self.neighbours[1][1], self.table["height"], self.table["width"])
 
         mat = [row[:] for row in self.grid ]
-        lefty = self.dfs(mat, self.neighbours[1][0], self.neighbours[1][1], self.table["height"], self.table["width"])
+        lefty = self.dfs(mat, self.neighbours[0][0], self.neighbours[0][1], self.table["height"], self.table["width"])
+
+        print(self.neighbours)
             
         if not lefty and not righty:
             return
 
         elif lefty:
-            self.neighbours.pop(0)
+            val = self.neighbours.pop(0)
 
         elif righty:
-            self.neighbours.pop(1)
+            val = self.neighbours.pop(1)
 
     def returnMove(self):
 
