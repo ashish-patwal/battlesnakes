@@ -94,7 +94,9 @@ class spot():
         self.updateNeighbours()
 
         if len(self.neighbours) == 2:
-            self.validNeighbours()
+            tup = (self.neighbours[0][2], self.neighbours[1][2])
+            if ('left' in tup and 'right' in tup) or ('up' in tup and 'down' in tup):
+                self.validNeighbours()
         
         open_set = PriorityQueue()
 
