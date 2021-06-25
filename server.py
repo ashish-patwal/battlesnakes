@@ -8,7 +8,7 @@ from queue import PriorityQueue
 class spot():
 
     def __init__(self, data: dict):
-        self.head, self.barriers, self.food, self.table = data.values()
+        self.head, self.barriers, self.food, self.table, self.snakes = data.values()
         self.neighbours = []
         self.grid = None
 
@@ -55,8 +55,6 @@ class spot():
         self.dfs(mat, x - 1, y, r, c, counter)
         self.dfs(mat, x, y - 1, r, c, counter)
 
-
-
     def validNeighbours(self):
 
         open_set = []
@@ -70,23 +68,6 @@ class spot():
         open_set.sort()
         self.neighbours.clear()
         self.neighbours.append(open_set[-1][1])
-
-        #countR = [0]
-        #mat = [row[:] for row in self.grid ]
-        #self.dfs(mat, self.neighbours[1][0], self.neighbours[1][1], self.table["height"], self.table["width"], countR)
-#
-#        countL = [0]
-#        mat = [row[:] for row in self.grid ]
-#        self.dfs(mat, self.neighbours[0][0], self.neighbours[0][1], self.table["height"], self.table["width"], countL)
-#
-#        print(countL, countR)
-#        print(self.neighbours)
-#
-#        if countL <= countR:
-#            self.neighbours.pop(0)
-#            
-#        elif countL >= countR:
-#            self.neighbours.pop(1)
 
     def returnMove(self):
 
@@ -157,6 +138,7 @@ class Battlesnake(object):
         newData["blocks"] = data["you"]["body"]
         newData["food"] = data["board"]["food"]
         newData["grid"] = {"height": data["board"]["height"], "width": data["board"]["width"]}
+        newData["snakes"] = [ newData["blocks"].append(item)  for snake in data["board"]["snakes"] for item in snake["body"] ]
 
         # Choose a random direction to move in
         #possible_moves = ["up", "down", "left", "right"]
