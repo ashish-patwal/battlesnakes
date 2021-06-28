@@ -110,6 +110,19 @@ class spot():
         self.updateNeighbours()
         self.snakeSense()
 
+        if self.neighbours == []:
+            spots = []
+            spots.append({"x": self.head["x"] + 1,"y": self.head["y"] ,"dir": "right"})
+            spots.append({"x": self.head["x"] - 1,"y": self.head["y"] ,"dir": "left"})
+            spots.append({"x": self.head["x"],"y": self.head["y"] + 1,"dir": "up"})
+            spots.append({"x": self.head["x"],"y": self.head["y"] - 1,"dir": "down"})
+
+            for spot in spots:
+                if {"x": spot["x"] ,"y": spot["y"]} in self.hazards:
+                    self.neighbours.append((spot["x"], spot["y"], spot["dir"]))
+
+
+
         if len(self.neighbours) == 2:
             tup = (self.neighbours[0][2], self.neighbours[1][2])
             if ('left' in tup and 'right' in tup) or ('up' in tup and 'down' in tup):
