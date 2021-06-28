@@ -8,7 +8,7 @@ from queue import PriorityQueue
 class spot():
 
     def __init__(self, data: dict):
-        self.head, self.barriers, self.food, self.table, self.snakes, self.name, self.length = data.values()
+        self.head, self.barriers, self.food, self.table, self.snakes, self.name, self.length, self.hazards = data.values()
         self.neighbours = []
         self.grid = None
 
@@ -69,6 +69,12 @@ class spot():
         self.neighbours.clear()
         self.neighbours.append(open_set[-1][1])
 
+    def hazardEvade(self):
+
+        if self.head not in self.hazards:
+            [ self.barriers.append(item) for item in self.hazards ]
+
+
     def snakeSense(self):
 
         dangerous = set()
@@ -99,6 +105,7 @@ class spot():
                 
     def returnMove(self):
 
+        self.hazardEvade()
         self.binaryGrid()
         self.updateNeighbours()
         self.snakeSense()
@@ -170,8 +177,8 @@ class Battlesnake(object):
         newData["snakes"] = data["board"]["snakes"]
         newData["name"] = data["you"]["name"]
         newData["length"] = data["you"]["length"]
+        newData["hazards"] = data["board"]["hazards"]
         [ newData["blocks"].append(item)  for snake in data["board"]["snakes"] for item in snake["body"] ]
-        [ newData["blocks"].append(item) for item in data["board"]["hazards"] ]
 
         # Choose a random direction to move in
         #possible_moves = ["up", "down", "left", "right"]
