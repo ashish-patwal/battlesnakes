@@ -8,7 +8,7 @@ from queue import PriorityQueue
 class spot():
 
     def __init__(self, data: dict):
-        self.head, self.barriers, self.food, self.table, self.snakes, self.hazards = data.values()
+        self.head, self.barriers, self.food, self.table, self.snakes, self.name, self.length = data.values()
         self.neighbours = []
         self.grid = None
 
@@ -69,10 +69,39 @@ class spot():
         self.neighbours.clear()
         self.neighbours.append(open_set[-1][1])
 
+    def snakeSense(self):
+
+        dangerous = []
+        killShot = None
+        
+        for snake in self.snakes:
+            for neighbour in self.neighbours:
+                spots = []
+                spots.append((neighbour[0] + 1, neighbour[1]))
+                spots.append((neighbour[0] - 1, neighbour[1]))
+                spots.append((neighbour[0], neighbour[1] + 1))
+                spots.append((neighbour[0], neighbour[1] - 1))
+                if snake["name"] != self.name:
+                    if ((snake["head"]["x"], snake["head"]["y"])) in spots:
+                        if snake["length"] >= self.length:
+                            dangerous.append(neighbour)
+                        else:
+                            killShot = neighbour
+
+        if dangerous:
+            for danger in dangerous:
+                self.neighbours.remove(danger)
+
+        if killShot:
+            self.neighbours.clear()
+            self.neighbours.append(killShot)
+
+                
     def returnMove(self):
 
         self.binaryGrid()
         self.updateNeighbours()
+        self.snakeSense()
 
         if len(self.neighbours) == 2:
             tup = (self.neighbours[0][2], self.neighbours[1][2])
@@ -138,8 +167,11 @@ class Battlesnake(object):
         newData["blocks"] = data["you"]["body"]
         newData["food"] = data["board"]["food"]
         newData["grid"] = {"height": data["board"]["height"], "width": data["board"]["width"]}
-        newData["snakes"] = [ newData["blocks"].append(item)  for snake in data["board"]["snakes"] for item in snake["body"] ]
-        newData["hazards"] = [ newData["blocks"].append(item) for item in data["board"]["hazards"] ]
+        newData["snakes"] = data["board"]["snakes"]
+        newData["name"] = data["you"]["name"]
+        newData["length"] = data["you"]["length"]
+        [ newData["blocks"].append(item)  for snake in data["board"]["snakes"] for item in snake["body"] ]
+        [ newData["blocks"].append(item) for item in data["board"]["hazards"] ]
 
         # Choose a random direction to move in
         #possible_moves = ["up", "down", "left", "right"]
