@@ -71,7 +71,7 @@ class spot():
 
     def snakeSense(self):
 
-        dangerous = []
+        dangerous = set()
         killShot = None
         
         for snake in self.snakes:
@@ -84,7 +84,7 @@ class spot():
                 if snake["name"] != self.name:
                     if ((snake["head"]["x"], snake["head"]["y"])) in spots:
                         if snake["length"] >= self.length:
-                            dangerous.append(neighbour)
+                            dangerous.add(neighbour)
                         else:
                             killShot = neighbour
 
