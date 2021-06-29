@@ -108,7 +108,7 @@ class spot():
         self.hazardEvade()
         self.binaryGrid()
         self.updateNeighbours()
-        self.snakeSense()
+        #self.snakeSense()
 
         if self.neighbours == []:
             spots = []
