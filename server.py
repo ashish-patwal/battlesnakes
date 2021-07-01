@@ -91,16 +91,16 @@ class spot():
                     if ((snake["head"]["x"], snake["head"]["y"])) in spots:
                         if snake["length"] >= self.length:
                             dangerous.add(neighbour)
-                        else:
-                            killShot = neighbour
+                        #else:
+                        #    killShot = neighbour
 
         if dangerous:
             for danger in dangerous:
                 self.neighbours.remove(danger)
 
-        if killShot:
-            self.neighbours.clear()
-            self.neighbours.append(killShot)
+        #if killShot:
+        #    self.neighbours.clear()
+        #    self.neighbours.append(killShot)
 
                 
     def returnMove(self):
@@ -108,7 +108,7 @@ class spot():
         self.hazardEvade()
         self.binaryGrid()
         self.updateNeighbours()
-        #self.snakeSense()
+        self.snakeSense()
 
         if self.neighbours == []:
             spots = []
