@@ -159,7 +159,7 @@ class Battlesnake(object):
             "author": "Lucifer",  # TODO: Your Battlesnake Username
             "color": "#CAF7E3",  # TODO: Personalize
             "head": "viper",  # TODO: Personalize
-            "tail": "rattle",  # TODO: Personalize
+            "tail": "rocket",  # TODO: Personalize
         }
 
     @cherrypy.expose
