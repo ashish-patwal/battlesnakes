@@ -118,6 +118,31 @@ class spot():
             if {"x": spot["x"] ,"y": spot["y"]} in self.hazards:
                 self.neighbours.append((spot["x"], spot["y"], spot["dir"]))
 
+#    def isTrap(self):
+#        mySnakeBody = None
+#        danger = ()
+#
+#        for snake in self.snakes:
+#            if snake["name"] == self.name:
+#                mySnakeBody = snake["body"]
+#                break
+#
+#        
+#        head, neck = mySnakeBody[0:2]
+#
+#        if not head["x"] - neck["x"]:
+#            pass
+#
+#
+#        elif not head["y"] - neck["y"]:
+#            if head["x"] - neck["x"] > 0:
+#
+#        else:
+#            print('don\'t know')
+
+
+
+
                 
     def returnMove(self):
 
@@ -131,9 +156,9 @@ class spot():
 
         if len(self.neighbours) == 2:
             tup = (self.neighbours[0][2], self.neighbours[1][2])
-            #if ('left' in tup and 'right' in tup) or ('up' in tup and 'down' in tup):
-            self.takeRisk()
-            self.validNeighbours()
+            if ('left' in tup and 'right' in tup) or ('up' in tup and 'down' in tup):
+                self.takeRisk()
+                self.validNeighbours()
         
         open_set = PriorityQueue()
 
@@ -143,7 +168,7 @@ class spot():
                     open_set.put((self.absDistance(food,neighbour), neighbour[2]))
 
             else:
-                open_set.put((-1, 'down'))
+                open_set.put((-1, 'right'))
 
         return open_set.get()
 
