@@ -190,7 +190,7 @@ class Battlesnake(object):
             "apiversion": "1",
             "author": "Lucifer",  # TODO: Your Battlesnake Username
             "color": "#CAF7E3",  # TODO: Personalize
-            "head": "viper",  # TODO: Personalize
+            "head": "villain",  # TODO: Personalize
             "tail": "rocket",  # TODO: Personalize
         }
 
